@@ -1,10 +1,15 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { graphql } from 'gatsby'
-import Layout from '../components/Layout'
-import Content, { HTMLContent } from '../components/Content'
+import React from 'react';
+import { graphql } from 'gatsby';
+import Layout from '../components/Layout';
+import Content, { HTMLContent, BaseContentProps } from '../components/Content';
 
-export const AboutPageTemplate = ({ title, content, contentComponent }) => {
+export interface AboutPageTemplateProps {
+  title?: React.ReactText;
+  content: string;
+  contentComponent?: React.ComponentType<BaseContentProps<any>>;
+}
+
+export const AboutPageTemplate: React.SFC<AboutPageTemplateProps> = ({ title, content, contentComponent }) => {
   const PageContent = contentComponent || Content
 
   return (
@@ -25,13 +30,11 @@ export const AboutPageTemplate = ({ title, content, contentComponent }) => {
   )
 }
 
-AboutPageTemplate.propTypes = {
-  title: PropTypes.string.isRequired,
-  content: PropTypes.string,
-  contentComponent: PropTypes.func,
+export interface AboutPageProps {
+  data: any;
 }
 
-const AboutPage = ({ data }) => {
+const AboutPage: React.SFC<AboutPageProps> = ({ data }) => {
   const { markdownRemark: post } = data
 
   return (
@@ -43,13 +46,9 @@ const AboutPage = ({ data }) => {
       />
     </Layout>
   )
-}
+};
 
-AboutPage.propTypes = {
-  data: PropTypes.object.isRequired,
-}
-
-export default AboutPage
+export default AboutPage;
 
 export const aboutPageQuery = graphql`
   query AboutPage($id: String!) {
@@ -60,4 +59,4 @@ export const aboutPageQuery = graphql`
       }
     }
   }
-`
+`;

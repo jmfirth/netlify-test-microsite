@@ -1,12 +1,20 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { kebabCase } from 'lodash'
-import Helmet from 'react-helmet'
-import { graphql, Link } from 'gatsby'
-import Layout from '../components/Layout'
-import Content, { HTMLContent } from '../components/Content'
+import React from 'react';
+import { kebabCase } from 'lodash';
+import Helmet from 'react-helmet';
+import { graphql, Link } from 'gatsby';
+import Layout from '../components/Layout';
+import Content, { HTMLContent, BaseContentProps } from '../components/Content';
 
-export const BlogPostTemplate = ({
+export interface BlogPostTemplateProps {
+  content: React.ReactNode;
+  contentComponent?: React.ComponentType<BaseContentProps<any>>;
+  description: React.ReactText;
+  tags?: string[];
+  title: string;
+  helmet?: React.ReactNode;
+}
+
+export const BlogPostTemplate: React.SFC<BlogPostTemplateProps> = ({
   content,
   contentComponent,
   description,
@@ -46,16 +54,27 @@ export const BlogPostTemplate = ({
   )
 }
 
-BlogPostTemplate.propTypes = {
-  content: PropTypes.node.isRequired,
-  contentComponent: PropTypes.func,
-  description: PropTypes.string,
-  title: PropTypes.string,
-  helmet: PropTypes.object,
+export interface Frontmatter {
+  description: string;
+  title: string;
+  tags?: string[];
 }
 
-const BlogPost = ({ data }) => {
-  const { markdownRemark: post } = data
+export interface MarkdownRemark<F extends object = Frontmatter> {
+  html: string;
+  frontmatter: F;
+}
+
+export interface BlogPostData<F extends object = Frontmatter> {
+  markdownRemark: MarkdownRemark<F>;
+}
+
+export interface BlogPostProps {
+  data: BlogPostData;
+}
+
+const BlogPost: React.SFC<BlogPostProps> = ({ data }) => { 
+  const { markdownRemark: post } = data;
 
   return (
     <Layout>
@@ -76,15 +95,9 @@ const BlogPost = ({ data }) => {
       />
     </Layout>
   )
-}
+};
 
-BlogPost.propTypes = {
-  data: PropTypes.shape({
-    markdownRemark: PropTypes.object,
-  }),
-}
-
-export default BlogPost
+export default BlogPost;
 
 export const pageQuery = graphql`
   query BlogPostByID($id: String!) {
@@ -99,4 +112,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;

@@ -1,13 +1,43 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { graphql } from 'gatsby'
-import Layout from '../components/Layout'
-import Features from '../components/Features'
-import Testimonials from '../components/Testimonials'
-import Pricing from '../components/Pricing'
-import PreviewCompatibleImage from '../components/PreviewCompatibleImage'
+import React from 'react';
+import { graphql } from 'gatsby';
+import Layout from '../components/Layout';
+import Features, { ImageInfoWithText } from '../components/Features';
+import Testimonials, { Testimonial } from '../components/Testimonials';
+import Pricing, { Price } from '../components/Pricing';
+import PreviewCompatibleImage, { Image, isImageInfo } from '../components/PreviewCompatibleImage';
+import { BlogPostData, Frontmatter } from './blog-post';
 
-export const ProductPageTemplate = ({
+export interface ProductPageIntro {
+  blurbs: ImageInfoWithText[];
+}
+
+export interface ProductPageMain {
+  heading?: string;
+  description?: string;
+  image1: Image;
+  image2: Image;
+  image3: Image;
+}
+
+export interface ProductPagePricing {
+  heading?: string;
+  description?: string;
+  plans: Price[];
+}
+
+export interface ProductPageTemplateProps {
+  image: Image;
+  title?: string;
+  heading?: string;
+  description?: string;
+  intro: ProductPageIntro;
+  main: ProductPageMain;
+  testimonials: Testimonial[];
+  fullImage: Image;
+  pricing: ProductPagePricing;
+}
+
+export const ProductPageTemplate: React.SFC<ProductPageTemplateProps> = ({
   image,
   title,
   heading,
@@ -28,7 +58,7 @@ export const ProductPageTemplate = ({
                 className="full-width-image-container margin-top-0"
                 style={{
                   backgroundImage: `url(${
-                    !!image.childImageSharp
+                    isImageInfo(image, true)
                       ? image.childImageSharp.fluid.src
                       : image
                   })`,
@@ -89,7 +119,7 @@ export const ProductPageTemplate = ({
                 className="full-width-image-container"
                 style={{
                   backgroundImage: `url(${
-                    fullImage.childImageSharp
+                    isImageInfo(fullImage, true)
                       ? fullImage.childImageSharp.fluid.src
                       : fullImage
                   })`,
@@ -106,33 +136,23 @@ export const ProductPageTemplate = ({
       </div>
     </div>
   </section>
-)
+);
 
-ProductPageTemplate.propTypes = {
-  image: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  title: PropTypes.string,
-  heading: PropTypes.string,
-  description: PropTypes.string,
-  intro: PropTypes.shape({
-    blurbs: PropTypes.array,
-  }),
-  main: PropTypes.shape({
-    heading: PropTypes.string,
-    description: PropTypes.string,
-    image1: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    image2: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-    image3: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  }),
-  testimonials: PropTypes.array,
-  fullImage: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-  pricing: PropTypes.shape({
-    heading: PropTypes.string,
-    description: PropTypes.string,
-    plans: PropTypes.array,
-  }),
+export interface ProductPageFrontmatter extends Frontmatter {
+  image: Image;
+  heading: string;
+  intro: ProductPageIntro;
+  main: ProductPageMain;
+  testimonials: Testimonial[];
+  full_image: Image;
+  pricing: ProductPagePricing;
 }
 
-const ProductPage = ({ data }) => {
+export interface ProductPageProps {
+  data: BlogPostData<ProductPageFrontmatter>;
+}
+
+const ProductPage: React.SFC<ProductPageProps> = ({ data }) => {
   const { frontmatter } = data.markdownRemark
 
   return (
@@ -150,17 +170,9 @@ const ProductPage = ({ data }) => {
       />
     </Layout>
   )
-}
+};
 
-ProductPage.propTypes = {
-  data: PropTypes.shape({
-    markdownRemark: PropTypes.shape({
-      frontmatter: PropTypes.object,
-    }),
-  }),
-}
-
-export default ProductPage
+export default ProductPage;
 
 export const productPageQuery = graphql`
   query ProductPage($id: String!) {
@@ -248,4 +260,4 @@ export const productPageQuery = graphql`
       }
     }
   }
-`
+`;

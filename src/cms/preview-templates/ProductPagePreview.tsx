@@ -1,8 +1,11 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { ProductPageTemplate } from '../../templates/product-page'
+import React from 'react';
+import { ProductPageTemplate } from '../../templates/product-page';
+import { PreviewProps } from './common';
+import { ImageInfo } from '../../components/PreviewCompatibleImage';
 
-const ProductPagePreview = ({ entry, getAsset }) => {
+export interface ProductPagePreviewProps extends PreviewProps {}
+
+const ProductPagePreview: React.SFC<ProductPagePreviewProps> = ({ entry, getAsset }) => {
   const entryBlurbs = entry.getIn(['data', 'intro', 'blurbs'])
   const blurbs = entryBlurbs ? entryBlurbs.toJS() : []
 
@@ -24,16 +27,16 @@ const ProductPagePreview = ({ entry, getAsset }) => {
         description: entry.getIn(['data', 'main', 'description']),
         image1: {
           image: getAsset(entry.getIn(['data', 'main', 'image1', 'image'])),
-          alt: entry.getIn(['data', 'main', 'image1', 'alt']),
-        },
+          alt: entry.getIn(['data', 'main', 'image1', 'alt']) as string | undefined,
+        } as ImageInfo,
         image2: {
           image: getAsset(entry.getIn(['data', 'main', 'image2', 'image'])),
-          alt: entry.getIn(['data', 'main', 'image2', 'alt']),
-        },
+          alt: entry.getIn(['data', 'main', 'image2', 'alt']) as string | undefined,
+        } as ImageInfo,
         image3: {
           image: getAsset(entry.getIn(['data', 'main', 'image3', 'image'])),
-          alt: entry.getIn(['data', 'main', 'image3', 'alt']),
-        },
+          alt: entry.getIn(['data', 'main', 'image3', 'alt']) as string | undefined,
+        } as ImageInfo,
       }}
       fullImage={entry.getIn(['data', 'full_image'])}
       testimonials={testimonials}
@@ -44,13 +47,6 @@ const ProductPagePreview = ({ entry, getAsset }) => {
       }}
     />
   )
-}
+};
 
-ProductPagePreview.propTypes = {
-  entry: PropTypes.shape({
-    getIn: PropTypes.func,
-  }),
-  getAsset: PropTypes.func,
-}
-
-export default ProductPagePreview
+export default ProductPagePreview;
